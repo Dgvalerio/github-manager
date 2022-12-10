@@ -99,6 +99,7 @@
           "/^react/",
           "/^next/",
           "/@mui/",
+          "/@emotion/",
           "/@/",
           "module",
           [
