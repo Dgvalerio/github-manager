@@ -8,7 +8,10 @@ import { Button, IconButton, Typography } from '@mui/material';
 
 import styled from '@emotion/styled';
 
+import { firebaseAuth, githubAuthProvider } from '@/config/firebase';
 import useUiStore from '@/store/ui/store';
+import { GithubAuthProvider, signInWithPopup } from '@firebase/auth';
+import { FirebaseError } from '@firebase/util';
 
 const Container = styled.main`
   &,
@@ -33,7 +36,28 @@ const Container = styled.main`
 const Home: NextPage = () => {
   const { switchThemeMode, themeMode } = useUiStore();
 
-  const handleGithubLogin = (): void => console.log('handleGithubLogin');
+  const handleGithubLogin = async (): Promise<void> => {
+    try {
+      const result = await signInWithPopup(firebaseAuth, githubAuthProvider);
+
+      const credential = GithubAuthProvider.credentialFromResult(result);
+
+      const token = credential?.accessToken;
+      const user = result.user;
+
+      console.log({ result, credential, token, user });
+    } catch (error) {
+      const e = error as FirebaseError;
+
+      const errorCode = e.code;
+      const errorMessage = e.message;
+      const email = e.customData?.email;
+
+      const credential = GithubAuthProvider.credentialFromError(e);
+
+      console.log({ errorCode, errorMessage, email, credential });
+    }
+  };
 
   return (
     <Container>
