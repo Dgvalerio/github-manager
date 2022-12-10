@@ -2,7 +2,7 @@
 Tenho ideias e elas estão aqui.
 
 ## To-do:
-- [ ] Login social com o Github;
+- [X] Login social com o Github;
 - [ ] Salvar dados em um firebase da vida;
 - [ ] Já pedir de cara o token do Github;
 - [ ] Fazer um design bem minimalista;
@@ -11,3 +11,4 @@ Tenho ideias e elas estão aqui.
 - [ ] Adicionar função de listar commits;
 - [ ] Adicionar função de listar pull requests;
 - [ ] Adicionar função de criar grupo de repositórios;
+- [ ] Adicionar toastify para apresentar erros;

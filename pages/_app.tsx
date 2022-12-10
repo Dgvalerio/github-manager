@@ -2,7 +2,8 @@ import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 
-import StyleWrapper from '@/components/style-wrapper';
+import Layout from '@/components/wrapper/layout';
+import StyleWrapper from '@/components/wrapper/style-wrapper';
 
 const App: NextPage<AppProps> = ({ Component, pageProps }) => (
   <>
@@ -14,7 +15,9 @@ const App: NextPage<AppProps> = ({ Component, pageProps }) => (
       <link rel="icon" href="/fav.png" />
     </Head>
     <StyleWrapper>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </StyleWrapper>
   </>
 );

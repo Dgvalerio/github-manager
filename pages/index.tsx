@@ -1,87 +1,67 @@
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
 
-import {
-  DarkMode as DarkModeIcon,
-  LightMode as LightModeIcon,
-} from '@mui/icons-material';
-import { Button, IconButton, Typography } from '@mui/material';
+import { signInWithPopup } from '@firebase/auth';
+import { FirebaseError } from '@firebase/util';
+
+import { Button, Typography } from '@mui/material';
 
 import styled from '@emotion/styled';
 
+import Redirect from '@/components/redirect';
 import { firebaseAuth, githubAuthProvider } from '@/config/firebase';
+import useAuthVerify from '@/hooks/useAuthVerify';
 import useUiStore from '@/store/ui/store';
-import { GithubAuthProvider, signInWithPopup } from '@firebase/auth';
-import { FirebaseError } from '@firebase/util';
+import { Load } from '@/store/ui/types';
+import { routes, RouteTypes } from '@/utils/routes';
 
 const Container = styled.main`
-  &,
-  main {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 
-  main {
-    justify-content: center;
-    align-items: center;
-  }
-
-  footer {
-    padding: 1rem;
-    display: flex;
-    justify-content: flex-end;
-  }
+  justify-content: center;
+  align-items: center;
 `;
 
-const Home: NextPage = () => {
-  const { switchThemeMode, themeMode } = useUiStore();
+const LoginPage: NextPage = () => {
+  const pass = useAuthVerify(RouteTypes.Protected);
+
+  const { enableLoad, disableLoad } = useUiStore();
+
+  const router = useRouter();
 
   const handleGithubLogin = async (): Promise<void> => {
+    enableLoad(Load.Login);
+
     try {
-      const result = await signInWithPopup(firebaseAuth, githubAuthProvider);
+      await signInWithPopup(firebaseAuth, githubAuthProvider);
 
-      const credential = GithubAuthProvider.credentialFromResult(result);
-
-      const token = credential?.accessToken;
-      const user = result.user;
-
-      console.log({ result, credential, token, user });
+      enableLoad(Load.Login);
+      await router.push(routes.home());
     } catch (error) {
       const e = error as FirebaseError;
 
-      const errorCode = e.code;
-      const errorMessage = e.message;
-      const email = e.customData?.email;
-
-      const credential = GithubAuthProvider.credentialFromError(e);
-
-      console.log({ errorCode, errorMessage, email, credential });
+      console.error(e);
+    } finally {
+      disableLoad(Load.Login);
     }
   };
 
+  if (!pass) return <Redirect />;
+
   return (
     <Container>
-      <main>
-        <Typography variant="h2" component="h1">
-          Bem-vindo ao Github Manager
-        </Typography>
-        <Typography variant="h4" component="p">
-          Antes de tudo, faça login para continuar:
-        </Typography>
-        <br />
-        <Button onClick={handleGithubLogin}>Login com o Github</Button>
-      </main>
-      <footer>
-        <IconButton size="large" color="inherit" onClick={switchThemeMode}>
-          {themeMode === 'dark' ? (
-            <LightModeIcon color="disabled" />
-          ) : (
-            <DarkModeIcon color="disabled" />
-          )}
-        </IconButton>
-      </footer>
+      <Typography variant="h2" component="h1">
+        Bem-vindo ao Github Manager
+      </Typography>
+      <Typography variant="h4" component="p">
+        Antes de tudo, faça login para continuar:
+      </Typography>
+      <br />
+      <Button onClick={handleGithubLogin}>Login com o Github</Button>
     </Container>
   );
 };
 
-export default Home;
+export default LoginPage;

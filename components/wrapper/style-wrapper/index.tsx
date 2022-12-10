@@ -2,7 +2,7 @@ import { FC, PropsWithChildren } from 'react';
 
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
-import GlobalStyles from '@/components/style-wrapper/global.styles';
+import GlobalStyles from '@/components/wrapper/style-wrapper/global.styles';
 import useUiStore from '@/store/ui/store';
 
 const StyleWrapper: FC<PropsWithChildren> = ({ children }) => {
