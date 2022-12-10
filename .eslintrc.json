@@ -98,6 +98,7 @@
         "groups": [
           "/^react/",
           "/^next/",
+          "/@firebase/",
           "/@mui/",
           "/@emotion/",
           "/@/",
